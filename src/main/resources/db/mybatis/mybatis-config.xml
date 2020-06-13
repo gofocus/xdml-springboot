@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>
+    </settings>
+    <typeAliases>
+        <typeAlias alias="Blog" type="com.gofocus.demo.entity.Blog"/>
+        <typeAlias alias="User" type="com.gofocus.demo.entity.User"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="db/mybatis/mappers/BlogMapper.xml"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mybatis.example.BlogMapper">
+    <resultMap id="blogMap" type="Blog">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="user" column="user_id" javaType="User" resultMap="userMap"/>
+    </resultMap>
+    <resultMap id="userMap" type="User">
+        <constructor>
+            <idArg column="id" javaType="int" name="id"/>
+            <arg column="username" javaType="string" name="username"/>
+            <arg column="avatar" javaType="string" name="avatar"/>
+        </constructor>
+    </resultMap>
+
+    <select id="getBlogs" parameterType="map" resultMap="blogMap">
+        select b.id,
+        b.title,
+        b.description,
+        b.content,
+        b.created_at,
+        b.updated_at,
+        u.id,
+        u.username,
+        u.avatar
+        from blog b
+        left join user u
+        on b.user_id = u.id
+        <where>
+            <if test="userId!=null">
+                b.user_id = #{userId}
+            </if>
+        </where>
+        order by b.updated_at desc
+        limit #{offSet},#{pageSize}
+    </select>
+
+    <select id="countBlogs" parameterType="map" resultType="int">
+        select count(*) from blog
+        <if test="userId!=null">
+            where blog.user_id = #{userId}
+        </if>
+    </select>
+
+    <select id="getBlogById" parameterType="int" resultMap="blogMap">
+        select * from blog b
+        left join user u
+        on b.user_id = u.id
+        <where>
+            <if test="blogId!=null">
+                b.id = #{blogId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBlog" parameterType="Blog" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into blog
+            (title, description, content, user_id, created_at, updated_at)
+        values (#{title}, #{description}, #{content}, #{user.id}, now(), now())
+    </insert>
+
+    <delete id="deleteBlogById" parameterType="int">
+        delete from user
+        <where>
+            <if test="blogId!=null">
+                id = #{blogId}
+            </if>
+        </where>
+    </delete>
+
+</mapper>
